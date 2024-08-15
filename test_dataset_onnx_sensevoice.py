@@ -3,7 +3,7 @@ from funsound.onnx.SenseVoiceSmall import init_model
 from funsound.compute_mer import compute_min_edit_distance
 
 def test_datadir(am_model, data_dir,audio_format = 'wav'):
-    audio_list, trans_list = load_dataset(data_dir,audio_format)
+    utt_list, audio_list, trans_list = load_dataset(data_dir,audio_format)
 
     results = am_model(audio_list)
     Num, Den = 1, 1

@@ -53,19 +53,21 @@ def sliding_window(audio_data, sample_rate=16000, window_size_sec=0.5):
     return rms, audio_data / np.exp(rms*20)
 
 
-def load_dataset(data_dir,audio_format='wav'):
-    audio_list, trans_list = [], []
+def load_dataset(data_dir,audio_format='wav', has_trans = True):
+    utt_list, audio_list, trans_list = [], [], []
     for utt in sorted(os.listdir(data_dir)):
         utt, format = utt.split(".")
         if format!=audio_format:continue
         audio_file = f"{data_dir}/{utt}.{audio_format}"
         trans_file = f"{data_dir}/{utt}.txt"
         audio_data = read_audio_data(audio_file)
-        with open(trans_file,'rt') as f:
-            trans_data = f.read()
+        if has_trans:
+            with open(trans_file,'rt') as f:
+                trans_data = f.read()
+                trans_list += [trans_data]
         audio_list += [audio_data]
-        trans_list += [trans_data]
-    return audio_list, trans_list
+        utt_list += [utt]
+    return utt_list, audio_list, trans_list
 
 def read_audio_with_split(audio_file,sr=16000,window_seconds=30):
     window_size = int(sr*window_seconds)

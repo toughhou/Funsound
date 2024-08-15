@@ -52,11 +52,33 @@ class SeacoParaformerPlus(SeacoParaformer):
             text = "".join(token_chs).replace("</s>","")
             RESULTS.append(text)
             
-
-        
         return RESULTS, AM_SCORES, VALID_TOKEN_LENS, US_ALPHAS, US_PEAKS
     
-    
+
+    def kws(self,waveform_list,WORDS=[]):
+        """加载词表"""
+        WORDS_IDXS = []
+        for WORD in WORDS:
+            WORD_IDX = self.converter.tokens2ids(list(WORD))
+            WORDS_IDXS.append(WORD_IDX)
+
+        """解码"""
+        _, AM_SCORES, VALID_TOKEN_LENS, US_ALPHAS, US_PEAKS = self.__call__(waveform_list=waveform_list,
+                                                                                  hotwords=" ".join(WORDS))
+        RESULTS = []
+        for am_score, valid_token_len in zip(AM_SCORES, VALID_TOKEN_LENS):
+            am_score = am_score[:valid_token_len-1]
+            best_score = -float('inf')
+            for WORD, WORD_IDX in zip(WORDS, WORDS_IDXS):
+                tgt_score = am_score[:,WORD_IDX]
+                _max = np.max(tgt_score,axis=1)
+                mean_score = np.mean(_max)
+                if mean_score>best_score:
+                    best_score = mean_score
+                    best_word = WORD
+            RESULTS.append([best_score, best_word])
+        return RESULTS
+            
 
 def init_model(asr_model_name):
     cfg_file = 'asr.yaml'
