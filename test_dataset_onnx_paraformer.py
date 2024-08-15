@@ -17,9 +17,10 @@ if __name__ == "__main__":
 
     am_model = init_model(asr_model_name = "iic/speech_seaco_paraformer_large_asr_nat-zh-cn-16k-common-vocab8404-pytorch")
 
-    Num, Den = test_datadir(am_model,"/opt/wangwei/funsound_onnx/audio/test/3/TR")
+    dir = "/opt/wangwei/funsound_onnx/dataset/数学_吃西瓜"
+    Num, Den = test_datadir(am_model,f"{dir}/TR")
     print(Num/Den)
-    Num, Den = test_datadir(am_model,"/opt/wangwei/funsound_onnx/audio/test/3/ST")
+    Num, Den = test_datadir(am_model,f"{dir}/ST")
     print(Num/Den)
-    Num, Den = test_datadir(am_model,"/opt/wangwei/funsound_onnx/audio/test/3/MX")
+    Num, Den = test_datadir(am_model,f"{dir}/MX")
     print(Num/Den)
