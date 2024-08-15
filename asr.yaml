@@ -1,0 +1,6 @@
+ASR:
+  cache_dir: "funasr_models"
+  asr_model_quantize: True
+  asr_model_ncpu: 4
+  asr_model_batchsize: 40
+  hotwords: ""
