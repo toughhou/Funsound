@@ -5,8 +5,9 @@ from funsound.compute_mer import compute_mer_text
 if __name__ == "__main__":
 
     # 加载模型
+    cfg = load_config('conf/onnx.yaml')
     am_model = init_model(asr_model_name = "iic/speech_seaco_paraformer_large_asr_nat-zh-cn-16k-common-vocab8404-pytorch",
-                          cfg_file='conf/onnx.yaml')
+                          cfg=cfg)
 
     # 加载音频
     audio_file = 'funsound/examples/test1.wav'

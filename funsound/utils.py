@@ -8,7 +8,6 @@ from pprint import pprint
 from tqdm import tqdm
 import torch
 import  re
-from scipy.ndimage import uniform_filter1d
 import os 
 import shutil
 import time 
@@ -41,7 +40,7 @@ def save_wavfile(path, wave_data):
         wav_file.writeframes(wave_data.tobytes())
     print(f"Successfully saved wavfile: {path} ..")
 
-def read_audio_data(audio_file):
+def read_audio_file(audio_file):
     """读取音频文件数据并转换为PCM格式。"""
     ffmpeg_cmd = [
         'ffmpeg',
@@ -56,10 +55,20 @@ def read_audio_data(audio_file):
     pcm_data = np.frombuffer(stdout_data, dtype=np.int16)
     return pcm_data
 
-def sliding_window(audio_data, sample_rate=16000, window_size_sec=0.5):
-    win_size = int(window_size_sec * sample_rate)
-    rms = np.sqrt(uniform_filter1d(audio_data**2, size=win_size, mode='reflect'))
-    return rms, audio_data / np.exp(rms*20)
+
+def read_audio_bytes(audio_bytes):
+    ffmpeg_cmd = [
+    'ffmpeg',
+    '-i', 'pipe:',  
+    '-f', 's16le',
+    '-acodec', 'pcm_s16le',
+    '-ar', '16k',
+    '-ac', '1',
+    'pipe:' ]
+    with subprocess.Popen(ffmpeg_cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=False) as proc:
+        stdout_data, stderr_data = proc.communicate(input=audio_bytes)
+    pcm_data = np.frombuffer(stdout_data, dtype=np.int16)
+    return pcm_data
 
 
 def load_dataset(data_dir,audio_format='wav', has_trans = True):
@@ -69,7 +78,7 @@ def load_dataset(data_dir,audio_format='wav', has_trans = True):
         if format!=audio_format:continue
         audio_file = f"{data_dir}/{utt}.{audio_format}"
         trans_file = f"{data_dir}/{utt}.txt"
-        audio_data = audio_i2f(read_audio_data(audio_file))
+        audio_data = audio_i2f(read_audio_file(audio_file))
         if has_trans:
             with open(trans_file,'rt') as f:
                 trans_data = f.read()
@@ -80,7 +89,7 @@ def load_dataset(data_dir,audio_format='wav', has_trans = True):
 
 def read_audio_with_split(audio_file,sr=16000,window_seconds=30):
     window_size = int(sr*window_seconds)
-    audio_data = audio_i2f(read_audio_data(audio_file))
+    audio_data = audio_i2f(read_audio_file(audio_file))
     audio_length = len(audio_data)
     windows = []
     for i in range(0, audio_length, window_size):
@@ -103,3 +112,10 @@ def mkdir(path, reset=False):
 
 def get_utt(path):
     return os.path.basename(path).split('.')[0]
+
+
+def load_config(cfg_file):
+    with open(cfg_file, 'r') as f:
+        cfg = yaml.safe_load(f)
+    pprint(cfg)
+    return cfg

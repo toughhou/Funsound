@@ -15,7 +15,10 @@ def test_datadir(am_model, data_dir,audio_format = 'wav'):
 
 if __name__ == "__main__":
 
-    am_model = init_model(asr_model_name = "iic/speech_seaco_paraformer_large_asr_nat-zh-cn-16k-common-vocab8404-pytorch")
+    # 加载模型
+    cfg = load_config('conf/onnx.yaml')
+    am_model = init_model(asr_model_name = "iic/speech_seaco_paraformer_large_asr_nat-zh-cn-16k-common-vocab8404-pytorch",
+                          cfg=cfg)
 
     dir = "/opt/wangwei/funsound_onnx/dataset/数学_吃西瓜"
     Num, Den = test_datadir(am_model,f"{dir}/TR")

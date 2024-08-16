@@ -56,7 +56,7 @@ def make_sentences(audio_file,grid_file,outdir):
                         'text':text}
         lines.append(line)
 
-    audio_data = read_audio_data(audio_file)
+    audio_data = read_audio_file(audio_file)
     audio_len = len(audio_data) / SR
     lines = merge_lines(lines,2,20)
     for i,line in enumerate(lines):

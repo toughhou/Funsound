@@ -55,7 +55,7 @@ class SeacoParaformerPlus(SeacoParaformer):
         return RESULTS, AM_SCORES, VALID_TOKEN_LENS, US_ALPHAS, US_PEAKS
     
 
-    def kws(self,waveform_list,WORDS=[]):
+    def kws(self,waveform_list,WORDS=[],as_hotwords=True):
         """加载词表"""
         WORDS_IDXS = []
         for WORD in WORDS:
@@ -64,7 +64,7 @@ class SeacoParaformerPlus(SeacoParaformer):
 
         """解码"""
         _, AM_SCORES, VALID_TOKEN_LENS, US_ALPHAS, US_PEAKS = self.__call__(waveform_list=waveform_list,
-                                                                                  hotwords=" ".join(WORDS))
+                                                                                  hotwords=" ".join(WORDS) if as_hotwords else "")
         RESULTS = []
         for am_score, valid_token_len in zip(AM_SCORES, VALID_TOKEN_LENS):
             am_score = am_score[:valid_token_len-1]
@@ -80,10 +80,7 @@ class SeacoParaformerPlus(SeacoParaformer):
         return RESULTS
             
 
-def init_model(asr_model_name,cfg_file = 'asr.yaml'):
-    with open(cfg_file, 'r') as f:
-        cfg = yaml.safe_load(f)
-    pprint(cfg)
+def init_model(asr_model_name,cfg ={}):
     cache_dir = cfg['ASR']['cache_dir']
     asr_model_quantize = cfg['ASR']['asr_model_quantize']
     asr_model_ncpu = cfg['ASR']['asr_model_ncpu']
