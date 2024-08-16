@@ -1,5 +1,5 @@
 from funsound.utils import *
-from funsound.onnx.SeacoParaformer import SeacoParaformerPlus, init_model
+from funsound.onnx.offline.SeacoParaformer import init_model
 from funsound.compute_mer import compute_mer_text
 import sys 
 

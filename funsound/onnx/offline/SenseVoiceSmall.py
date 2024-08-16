@@ -60,8 +60,7 @@ class SenseVoiceSmallPlus(SenseVoiceSmall):
 
 
 
-def init_model(asr_model_name):
-    cfg_file = 'asr.yaml'
+def init_model(asr_model_name,cfg_file = 'asr.yaml'):
     with open(cfg_file, 'r') as f:
         cfg = yaml.safe_load(f)
     pprint(cfg)
@@ -69,7 +68,6 @@ def init_model(asr_model_name):
     asr_model_quantize = cfg['ASR']['asr_model_quantize']
     asr_model_ncpu = cfg['ASR']['asr_model_ncpu']
     asr_model_batchsize = cfg['ASR']['asr_model_batchsize']
-    hotwords = cfg['ASR']['hotwords']
 
     am_model = SenseVoiceSmallPlus(
         model_dir=asr_model_name,

@@ -1,4 +1,4 @@
-# Funsound: 基于Funasr的 [在线/离线语音识别] 部署
+# Funsound: 基于Funasr的 语音识别简易开发调用接口
 
 ## 网站应用
 > 离线语音转写：www.funsound.cn

@@ -4,3 +4,4 @@ funasr_models
 audio
 dataset
 funsound/examples/数学_吃西瓜.mp3
+funsound/onnx/offline/__pycache__/SeacoParaformer.cpython-312.pyc

@@ -11,6 +11,16 @@ import  re
 from scipy.ndimage import uniform_filter1d
 import os 
 import shutil
+import time 
+
+class Timer:
+    def __enter__(self):
+        self.start = time.time()
+        return self
+
+    def __exit__(self, *args):
+        self.end = time.time()
+        self.interval = self.end - self.start
 
 def audio_f2i(data, width=16):
     """将浮点数音频数据转换为整数音频数据。"""
@@ -44,7 +54,6 @@ def read_audio_data(audio_file):
     with subprocess.Popen(ffmpeg_cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=False) as proc:
         stdout_data, stderr_data = proc.communicate()
     pcm_data = np.frombuffer(stdout_data, dtype=np.int16)
-    pcm_data = audio_i2f(pcm_data)
     return pcm_data
 
 def sliding_window(audio_data, sample_rate=16000, window_size_sec=0.5):
@@ -60,7 +69,7 @@ def load_dataset(data_dir,audio_format='wav', has_trans = True):
         if format!=audio_format:continue
         audio_file = f"{data_dir}/{utt}.{audio_format}"
         trans_file = f"{data_dir}/{utt}.txt"
-        audio_data = read_audio_data(audio_file)
+        audio_data = audio_i2f(read_audio_data(audio_file))
         if has_trans:
             with open(trans_file,'rt') as f:
                 trans_data = f.read()
@@ -71,7 +80,7 @@ def load_dataset(data_dir,audio_format='wav', has_trans = True):
 
 def read_audio_with_split(audio_file,sr=16000,window_seconds=30):
     window_size = int(sr*window_seconds)
-    audio_data = read_audio_data(audio_file)
+    audio_data = audio_i2f(read_audio_data(audio_file))
     audio_length = len(audio_data)
     windows = []
     for i in range(0, audio_length, window_size):
