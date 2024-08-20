@@ -1,5 +1,5 @@
 from funsound.utils import *
-from funsound.funasr.onnx.offline.SeacoParaformer import SeacoParaformerPlus, init_model
+from funsound.funasr.onnx.offline.SeacoParaformer import init_model
 from funsound.compute_mer import compute_min_edit_distance
 
 def test_datadir(am_model, data_dir,audio_format = 'wav'):

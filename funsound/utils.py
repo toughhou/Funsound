@@ -109,6 +109,11 @@ def mkdir(path, reset=False):
         print(f"Directory created: {path}")
     return path
 
+def mkfile(path):
+    with open(path,'wt') as f:
+        pass
+    print(f"File created: {path}")
+
 
 def get_utt(path):
     return os.path.basename(path).split('.')[0]

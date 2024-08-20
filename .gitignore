@@ -15,3 +15,6 @@ sr16k.sh
 funsound/funasr/onnx/__pycache__/SeacoParaformer.cpython-311.pyc
 funsound/funasr/onnx/__pycache__/SenseVoiceSmall.cpython-311.pyc
 funsound/funasr/onnx/offline/__pycache__/SeacoParaformer.cpython-311.pyc
+funsound/whisper/__pycache__/asr.cpython-311.pyc
+log/
+funsound/common/__pycache__

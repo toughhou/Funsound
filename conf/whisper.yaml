@@ -1,0 +1,4 @@
+ASR:
+  condition_on_previous_text: False
+  language: 'zh'
+  device: 'auto'
