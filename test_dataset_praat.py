@@ -48,6 +48,7 @@ def make_sentences(audio_file,grid_file,outdir):
         role = label.split()[-1]
         text = "".join(label.split()[:-1])
         text = text_clean(text)
+        print(label)
         assert role in ["TR","ST","MX"]
         line = {'start':round(ts,2),
                         'end':round(te,2),
@@ -68,15 +69,15 @@ def make_sentences(audio_file,grid_file,outdir):
         mkdir(f"{outdir}/{role}")
         seg_audio_file = os.path.join(f"{outdir}/{role}", f'{utt}.wav')
         seg_label_file = os.path.join(f"{outdir}/{role}", f'{utt}.txt')
-        seg_audio_data = audio_f2i(audio_data[ts:te])
+        seg_audio_data = audio_data[ts:te]
         save_wavfile(seg_audio_file,seg_audio_data)
         with open(seg_label_file,'wt',encoding='utf-8') as f:
             print(f"{line['text']}",file=f)
 
 if __name__ == "__main__":
 
-    audio_file = "/opt/wangwei/funsound_onnx/funsound/examples/数学_吃西瓜.mp3"
-    grid_file = "/opt/wangwei/funsound_onnx/funsound/examples/数学_吃西瓜.TextGrid"
+    audio_file = "/opt/wangwei/funsound_onnx/dataset/科学_磁铁.mp3"
+    grid_file = "/opt/wangwei/funsound_onnx/dataset/科学_磁铁.TextGrid"
     outdir = "/opt/wangwei/funsound_onnx/dataset"
 
     make_sentences(audio_file,grid_file,outdir)

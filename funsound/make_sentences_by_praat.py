@@ -68,7 +68,7 @@ def make_sentences(audio_file,grid_file,outdir):
         mkdir(f"{outdir}/{role}")
         seg_audio_file = os.path.join(f"{outdir}/{role}", f'{utt}.wav')
         seg_label_file = os.path.join(f"{outdir}/{role}", f'{utt}.txt')
-        seg_audio_data = audio_f2i(audio_data[ts:te])
+        seg_audio_data = audio_data[ts:te]
         save_wavfile(seg_audio_file,seg_audio_data)
         with open(seg_label_file,'wt',encoding='utf-8') as f:
             print(f"{line['text']}",file=f)
