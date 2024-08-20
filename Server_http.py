@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, make_response
 from funsound.utils import *
-from funsound.onnx.offline.SeacoParaformer import init_model
+from funsound.funasr.onnx.offline.SeacoParaformer import init_model
 
 RESPONSE_TEMPLATE = {
     "code": 1, 
@@ -61,7 +61,7 @@ def recognition():
     return create_response(jsonify(response_data))
 
 if __name__ == '__main__':
-    cfg = load_config('conf/onnx.yaml')
+    cfg = load_config('conf/funasr_onnx.yaml')
     keywords_file = cfg['KWS']['keywords_file']
     host = cfg['HTTP']['host']
     port = cfg['HTTP']['port']

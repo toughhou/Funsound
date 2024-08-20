@@ -3,7 +3,7 @@ from funsound.funasr.onnx.offline.SeacoParaformer import SeacoParaformerPlus, in
 from funsound.compute_mer import compute_min_edit_distance
 
 def test_datadir(am_model, data_dir,audio_format = 'wav'):
-    utt_list, audio_list, trans_list = load_dataset(data_dir,has_trans=True)
+    utt_list, audio_list, trans_list = load_dataset(data_dir,has_trans=True,audio_format=audio_format)
 
     results, *p = am_model(audio_list)
     Num, Den = 1, 1
@@ -16,7 +16,7 @@ def test_datadir(am_model, data_dir,audio_format = 'wav'):
 if __name__ == "__main__":
 
     # 加载模型
-    cfg = load_config('conf/onnx.yaml')
+    cfg = load_config('conf/funasr_onnx.yaml')
     am_model = init_model(asr_model_name = "iic/speech_seaco_paraformer_large_asr_nat-zh-cn-16k-common-vocab8404-pytorch",
                           cfg=cfg)
 
