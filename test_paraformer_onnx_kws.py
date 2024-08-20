@@ -1,5 +1,5 @@
 from funsound.utils import *
-from funsound.onnx.offline.SeacoParaformer import init_model
+from funsound.funasr.onnx.offline.SeacoParaformer import init_model
 
 if __name__ == "__main__":
 

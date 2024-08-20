@@ -40,10 +40,8 @@ def recognition():
             pcm_data = audio_i2f(read_audio_bytes(audio_bytes))
         response_data['kws']["cost_audio_seconds"] = t.interval
     except Exception as e:
-        raise e
         response_data['message'] = str(e)
         return create_response(jsonify(response_data))
-    print(pcm_data.shape)
 
     # 使用模型进行 ASR
     try:
@@ -52,7 +50,6 @@ def recognition():
         response_data['kws']["cost_decoding_seconds"] = t.interval
         response_data['kws']['result'] = (float(results[0][0]),results[0][1])
     except Exception as e:
-        raise e
         response_data['message'] = str(e)
         return create_response(jsonify(response_data))
 

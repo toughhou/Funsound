@@ -12,3 +12,6 @@ __MACOSX/
 funsound/onnx/offline/__pycache__/SeacoParaformer.cpython-311.pyc
 Linux_cnenesr_e75f07b62_v1.0.8_v2.2.15-rc5.zip
 sr16k.sh
+funsound/funasr/onnx/__pycache__/SeacoParaformer.cpython-311.pyc
+funsound/funasr/onnx/__pycache__/SenseVoiceSmall.cpython-311.pyc
+funsound/funasr/onnx/offline/__pycache__/SeacoParaformer.cpython-311.pyc
