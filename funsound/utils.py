@@ -16,6 +16,7 @@ import queue
 import json 
 import random
 import string
+import datetime
 
 class Timer:
     def __enter__(self):
@@ -148,3 +149,10 @@ def generate_random_string(n):
     letters = string.ascii_letters + string.digits
     random_string = ''.join(random.choice(letters) for i in range(n))
     return random_string
+
+def get_current_time():
+    # 获取当前时间
+    now = datetime.datetime.now()
+    # 格式化时间，精确到秒
+    formatted_time = now.strftime("%Y-%m-%d+%H:%M:%S")
+    return formatted_time

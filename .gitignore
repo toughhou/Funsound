@@ -18,3 +18,4 @@ funsound/funasr/onnx/offline/__pycache__/SeacoParaformer.cpython-311.pyc
 funsound/whisper/__pycache__/asr.cpython-311.pyc
 log/
 funsound/common/__pycache__
+cache

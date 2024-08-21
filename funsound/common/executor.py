@@ -82,19 +82,22 @@ def get_relax_worker(workers: list):
 
 def get_task_progress(task_id):
     with TASKS_LOCK:
-        res = {}
-        state = TASKS[task_id]
-        res['status'] = state['status']
-        res['result'] = state['result']
-        res['prgs'] = None
-        if state['prgs'] and  state['prgs'].qsize():
-            while state['prgs'].qsize():
-                tmp = state['prgs'].get()
-            res['prgs'] = tmp
-        return res
+        if task_id in TASKS:
+            res = {}
+            state = TASKS[task_id]
+            res['status'] = state['status']
+            res['result'] = state['result']
+            res['prgs'] = None
+            if state['prgs'] and  state['prgs'].qsize():
+                while state['prgs'].qsize():
+                    tmp = state['prgs'].get()
+                res['prgs'] = tmp
+            return res
+        else:
+            return None
 
     
-def sunmit_task(workers, params:list):
+def submit_task(workers, params:list):
     task_id = generate_random_string(20)
     worker = get_relax_worker(workers)
     worker.queue.put([task_id]+params)

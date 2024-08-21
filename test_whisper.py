@@ -30,7 +30,7 @@ if __name__ == "__main__":
 
 
     audio_file = "funsound/examples/test1.wav"
-    task_id = sunmit_task(workers,params=[audio_file])
+    task_id = submit_task(workers,params=[audio_file])
 
     while 1:
         prgs = get_task_progress(task_id)
