@@ -1,7 +1,7 @@
 import requests
 import time
 
-HOST = "http://127.0.0.1"
+HOST = "http://47.95.170.190"
 PORT = 5001
 
 def get_worker_status():
@@ -62,15 +62,16 @@ def main():
     # 轮询任务进度
     while True:
         progress_response = get_task_progress(task_id)
-        print("Task Progress Response:", progress_response)
-
+        # print(progress_response['code'],progress_response['message'])
         if progress_response['code'] == 0:
             status = progress_response['content']['status']
+            prgs = progress_response['content']['prgs']
+            print(prgs)
             if status in ["SUCCESS", "FAIL"]:
                 if status == "SUCCESS":
                     print("Transcription Result:")
                     for line in progress_response['content']['result']:
-                        print(line)
+                        print(f"%.2f - %.2f %s"%(line['start'],line['end'],line['text']))
                 else:
                     print("任务失败")
                 break
