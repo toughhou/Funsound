@@ -11,6 +11,11 @@ import  re
 import os 
 import shutil
 import time 
+import threading 
+import queue 
+import json 
+import random
+import string
 
 class Timer:
     def __enter__(self):
@@ -124,3 +129,22 @@ def load_config(cfg_file):
         cfg = yaml.safe_load(f)
     pprint(cfg)
     return cfg
+
+def json_io(file,mode="read",inp = []):
+    if mode=='read':
+        f = open(file, "rt",encoding="utf-8")
+        data = json.load(f)
+        f.close()
+        return data
+    else:
+        with open(file,'w') as f:
+            json.dump(inp,
+                       f,
+                       ensure_ascii=False,
+                       indent=4)
+        return True
+
+def generate_random_string(n):
+    letters = string.ascii_letters + string.digits
+    random_string = ''.join(random.choice(letters) for i in range(n))
+    return random_string

@@ -7,6 +7,7 @@ class ASR_OFFLINE():
     def __init__(self,
                  log_file="") -> None:
         self.log_file = log_file
+        self.finish = False
         mkfile(self.log_file)
 
     def log(self,text ):

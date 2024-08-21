@@ -30,6 +30,8 @@ class ASR(ASR_OFFLINE):
                     'role':""}
             lines.append(line)
             self.log(line)
+            
+        self.finish = True
         return lines
         
 

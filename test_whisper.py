@@ -1,10 +1,44 @@
 from funsound.whisper.asr import ASR 
+from funsound.common.executor import *
 
 
-asr_ = ASR(model_id='/opt/wangwei/funsound_onnx/funasr_models/keepitsimple/faster-whisper-large-v3',
-           cfg_file='conf/whisper.yaml',
-           log_file='log/whisper.log')
-asr_.init_state()
+def init_engine():
+    engine = ASR(model_id='/opt/wangwei/funsound_onnx/funasr_models/keepitsimple/faster-whisper-large-v3',
+                cfg_file='conf/whisper.yaml',
+                log_file=f'log/whisper-{id}.log')
+    engine.init_state()
+    return engine
 
-res = asr_.inference('/opt/wangwei/funsound_onnx/funsound/examples/test1.wav')
-print(res)
+def processor(self,params):
+    audio_file = params[0]
+    result = self.engine.inference(audio_file)
+    return result
+
+Worker.processor = processor
+
+
+if __name__ == "__main__":
+
+    workers = []
+    for id in range(3):
+        engine = init_engine()
+        worker = Worker(wid=id,log_file=f'log/worker-{id}.log')
+        worker.load_engine(engine=engine)
+        workers.append(worker)
+    launch(workers)
+    print(get_worker_status(workers))
+
+
+    audio_file = "/opt/wangwei/funsound_onnx/funsound/examples/test1.wav"
+    task_id = sunmit_task(workers,params=[audio_file])
+
+    while 1:
+        prgs = get_task_progress(task_id)
+        print(prgs)
+        if prgs['status'] in [SUCCESS,FAIL]:
+            break
+        time.sleep(2)
+
+
+
+
