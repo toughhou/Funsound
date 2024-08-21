@@ -14,6 +14,7 @@ class ASR(ASR_OFFLINE):
         mkfile(self.log_file)
     
     def init_state(self):
+        while self.prgs.qsize():self.prgs.get()
         self.model = WhisperModel(self.model_id, device=self.cfg['ASR']['device'])
         self.log("Init State successfully .")
 
@@ -23,13 +24,14 @@ class ASR(ASR_OFFLINE):
         segments, info = self.model.transcribe(audio_file,
                                                condition_on_previous_text=self.cfg['ASR']['condition_on_previous_text'],
                                                language=self.cfg['ASR']['language'])
-        for segment in segments:
+        for i,segment in enumerate(segments):
             line = {'start':segment.start,
                     'end':segment.end,
                     'text':segment.text,
                     'role':""}
             lines.append(line)
             self.log(line)
+            self.progress(cur=i+1,msg=str(line))
             
         self.finish = True
         return lines

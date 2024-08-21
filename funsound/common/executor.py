@@ -1,9 +1,5 @@
 from funsound.utils import *
-INIT = 0
-PROCESS = 1
-SUCCESS = 2
-FAIL = 3
-TASK_STRUCT = {'status': INIT, 'prgs':None, 'result': []}
+TASK_STRUCT = {'status': "INIT", 'prgs':None, 'result': []}
 
 TASKS = {}
 TASKS_LOCK = threading.Lock()
@@ -36,16 +32,17 @@ class Worker(threading.Thread):
 
     def handle_task(self, task_id, params):
         TASKS[task_id]['status'] = "PROCESS"
+        TASKS[task_id]['prgs'] = self.engine.prgs
         try:
             result = self.processor(params)
             with TASKS_LOCK:
-                TASKS[task_id]['status'] = SUCCESS
+                TASKS[task_id]['status'] = "SUCCESS"
                 TASKS[task_id]['result'] = result
             self.log(f"Task {task_id} completed successfully.")
         except Exception as e:
             self.log(f"Task {task_id} failed with error: {str(e)}", level="error")
             with TASKS_LOCK:
-                TASKS[task_id]['status'] = FAIL
+                TASKS[task_id]['status'] = "FAIL"
                 TASKS[task_id]['result'] = str(e)
 
     def run(self):
@@ -85,7 +82,17 @@ def get_relax_worker(workers: list):
 
 def get_task_progress(task_id):
     with TASKS_LOCK:
-        return TASKS.get(task_id, {"status": None, "result": None})
+        res = {}
+        state = TASKS[task_id]
+        res['status'] = state['status']
+        res['result'] = state['result']
+        res['prgs'] = None
+        if state['prgs'] and  state['prgs'].qsize():
+            while state['prgs'].qsize():
+                tmp = state['prgs'].get()
+            res['prgs'] = tmp
+        return res
+
     
 def sunmit_task(workers, params:list):
     task_id = generate_random_string(20)

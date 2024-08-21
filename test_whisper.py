@@ -35,9 +35,9 @@ if __name__ == "__main__":
     while 1:
         prgs = get_task_progress(task_id)
         print(prgs)
-        if prgs['status'] in [SUCCESS,FAIL]:
+        if prgs['status'] in ["SUCCESS","FAIL"]:
             break
-        time.sleep(2)
+        time.sleep(1)
 
 
 
