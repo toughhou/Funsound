@@ -3,7 +3,7 @@ INIT = 0
 PROCESS = 1
 SUCCESS = 2
 FAIL = 3
-TASK_STRUCT = {'status': INIT, 'result': []}
+TASK_STRUCT = {'status': INIT, 'prgs':None, 'result': []}
 
 TASKS = {}
 TASKS_LOCK = threading.Lock()

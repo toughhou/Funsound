@@ -3,7 +3,7 @@ from funsound.common.executor import *
 
 
 def init_engine():
-    engine = ASR(model_id='/opt/wangwei/funsound_onnx/funasr_models/keepitsimple/faster-whisper-large-v3',
+    engine = ASR(model_id='funasr_models/keepitsimple/faster-whisper-large-v3',
                 cfg_file='conf/whisper.yaml',
                 log_file=f'log/whisper-{id}.log')
     engine.init_state()
@@ -20,7 +20,7 @@ Worker.processor = processor
 if __name__ == "__main__":
 
     workers = []
-    for id in range(3):
+    for id in range(1):
         engine = init_engine()
         worker = Worker(wid=id,log_file=f'log/worker-{id}.log')
         worker.load_engine(engine=engine)
@@ -29,7 +29,7 @@ if __name__ == "__main__":
     print(get_worker_status(workers))
 
 
-    audio_file = "/opt/wangwei/funsound_onnx/funsound/examples/test1.wav"
+    audio_file = "funsound/examples/test1.wav"
     task_id = sunmit_task(workers,params=[audio_file])
 
     while 1:

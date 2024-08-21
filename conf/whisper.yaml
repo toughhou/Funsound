@@ -1,5 +1,5 @@
 ASR:
   cache_dir: "funasr_models"
   condition_on_previous_text: False
-  language: 'zh'
+  language: zh
   device: 'auto'
