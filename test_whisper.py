@@ -1,12 +1,12 @@
 from funsound.whisper.asr import ASR 
-from funsound.common.executor import *
+from funsound.common.executor import Worker, launch, get_worker_status, submit_task, get_task_progress
+from funsound.utils import *
 
-
-def init_engine():
+def init_engine(id):
     engine = ASR(model_id='funasr_models/keepitsimple/faster-whisper-large-v3',
                 cfg_file='conf/whisper.yaml',
                 log_file=f'log/whisper-{id}.log')
-    engine.init_state(id)
+    engine.init_state()
     return engine
 
 def processor(self,params):
@@ -19,8 +19,9 @@ Worker.processor = processor
 
 if __name__ == "__main__":
 
+    nj = 3 # 开启3路
     workers = []
-    for id in range(1):
+    for id in range(nj):
         engine = init_engine(id)
         worker = Worker(wid=id,log_file=f'log/worker-{id}.log')
         worker.load_engine(engine=engine)
@@ -36,6 +37,9 @@ if __name__ == "__main__":
         prgs = get_task_progress(task_id)
         print(prgs)
         if prgs['status'] in ["SUCCESS","FAIL"]:
+            if prgs['status'] == "SUCCESS":
+                for line in  prgs['result']:
+                    print(line)
             break
         time.sleep(1)
 
