@@ -1,5 +1,5 @@
-# Funsound: 语音识别简易开发调用接口
-
+# Funsound: 语音识别部署工具包
+![alt text](imgs/logo.png)
 ## 网站应用
 > 离线语音转写：www.funsound.cn
 

@@ -6,7 +6,7 @@ def init_engine():
     engine = ASR(model_id='funasr_models/keepitsimple/faster-whisper-large-v3',
                 cfg_file='conf/whisper.yaml',
                 log_file=f'log/whisper-{id}.log')
-    engine.init_state()
+    engine.init_state(id)
     return engine
 
 def processor(self,params):
@@ -21,7 +21,7 @@ if __name__ == "__main__":
 
     workers = []
     for id in range(1):
-        engine = init_engine()
+        engine = init_engine(id)
         worker = Worker(wid=id,log_file=f'log/worker-{id}.log')
         worker.load_engine(engine=engine)
         workers.append(worker)
