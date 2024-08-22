@@ -68,17 +68,18 @@ class SeacoParaformerPlus(SeacoParaformer):
         RESULTS = []
         for am_score, valid_token_len in zip(AM_SCORES, VALID_TOKEN_LENS):
             am_score = am_score[:valid_token_len-1]
-            best_score = -float('inf')
+            result = []
             for WORD, WORD_IDX in zip(WORDS, WORDS_IDXS):
                 tgt_score = am_score[:,WORD_IDX]
                 _max = np.max(tgt_score,axis=1)
                 mean_score = np.mean(_max)
-                if mean_score>best_score:
-                    best_score = mean_score
-                    best_word = WORD
-            RESULTS.append([best_score, best_word])
+                result.append([WORD,mean_score])
+            result.sort(reverse=True,key=lambda x: x[1])
+            RESULTS.append(result)
         return RESULTS
-            
+    
+
+
 
 def init_model(asr_model_name,cfg ={}):
     cache_dir = cfg['ASR']['cache_dir']

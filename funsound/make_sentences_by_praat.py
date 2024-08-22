@@ -45,6 +45,7 @@ def make_sentences(audio_file,grid_file,outdir):
     for interval in tier.entryList:
         ts, te, label = interval
         if not label:continue
+        print(label)
         role = label.split()[-1]
         text = "".join(label.split()[:-1])
         text = text_clean(text)
@@ -72,3 +73,9 @@ def make_sentences(audio_file,grid_file,outdir):
         save_wavfile(seg_audio_file,seg_audio_data)
         with open(seg_label_file,'wt',encoding='utf-8') as f:
             print(f"{line['text']}",file=f)
+
+if __name__ == "__main__":
+
+    make_sentences(audio_file="dataset/道德_自然灾害.mp3",
+                   grid_file="dataset/道德_自然灾害.TextGrid",
+                   outdir="dataset")

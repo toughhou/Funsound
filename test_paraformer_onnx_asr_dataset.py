@@ -20,7 +20,7 @@ if __name__ == "__main__":
     am_model = init_model(asr_model_name = "iic/speech_seaco_paraformer_large_asr_nat-zh-cn-16k-common-vocab8404-pytorch",
                           cfg=cfg)
 
-    dir = "/opt/wangwei/funsound_onnx/dataset/科学_磁铁"
+    dir = "/opt/wangwei/funsound_onnx/dataset/道德_自然灾害"
     Num, Den = test_datadir(am_model,f"{dir}/TR")
     print(Num/Den)
     Num, Den = test_datadir(am_model,f"{dir}/ST")
