@@ -13,10 +13,11 @@ if __name__ == "__main__":
         WORDS = [line.strip() for line in WORDS if len(line.strip()) <= 10]
 
 
-    audio_file = "dataset/keywords/chen_关闭黑屏_00.wav"
+    audio_file = "dataset/keywords/chen_继续播放视频_00.wav"
     audio_data = read_audio_file(audio_file)
     audio_list = [audio_data]
-    results = am_model.kws(audio_list,WORDS,as_hotwords=True)
+    # results = am_model.kws(audio_list,WORDS,as_hotwords=True)
+    results = am_model.kws_dtw(audio_list,WORDS,as_hotwords=True)
     pprint(results[0])
 
     
