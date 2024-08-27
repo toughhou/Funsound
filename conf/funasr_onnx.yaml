@@ -3,6 +3,7 @@ ASR:
   asr_model_quantize: True
   asr_model_ncpu: 4
   asr_model_batchsize: 40
+  asr_iter_batchsize: 2
 
 KWS:
   keywords_file: "egs/keywords.txt"

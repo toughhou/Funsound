@@ -1,7 +1,7 @@
 
 from funasr_onnx import SeacoParaformer
 from funsound.utils import *
-
+from funasr_onnx.utils.timestamp_utils import time_stamp_lfr6_onnx
 
 def dtw1(P, v_ids):
     T, V = P.shape  # T: time steps, V: vocab size
@@ -71,6 +71,7 @@ class SeacoParaformerPlus(SeacoParaformer):
         # onnx推理
         waveform_nums = len(waveform_list)
         RESULTS = []
+        TIMESTAMPS = []
         AM_SCORES = []
         VALID_TOKEN_LENS = []
         US_ALPHAS = []
@@ -89,14 +90,45 @@ class SeacoParaformerPlus(SeacoParaformer):
             US_ALPHAS.extend(us_alphas)
             US_PEAKS.extend(us_peaks)
 
-        for am_scores,valid_token_lens in  zip(AM_SCORES,VALID_TOKEN_LENS):
+        # 贪心搜索
+        for am_scores,valid_token_lens,us_peaks in  zip(AM_SCORES,VALID_TOKEN_LENS,US_PEAKS):
             token_ids_valid = self.greedy_search(am_scores,valid_token_lens)
             token_chs = self.converter.ids2tokens(token_ids_valid)
             text = "".join(token_chs).replace("</s>","")
             RESULTS.append(text)
-            
-        return RESULTS, AM_SCORES, VALID_TOKEN_LENS, US_ALPHAS, US_PEAKS
+            timestamp_str, timestamp_raw = time_stamp_lfr6_onnx(us_peaks, copy.copy(list(text)))
+            timestamp_list = self.get_timestamp_list(timestamp_str)
+            TIMESTAMPS.append(timestamp_list)
+        return RESULTS,TIMESTAMPS, AM_SCORES, VALID_TOKEN_LENS, US_ALPHAS, US_PEAKS
     
+    def get_timestamp_list(self,timestamp_str):
+        timestamp_list_raw = timestamp_str.split(";")
+        timestamp_list = []
+        for line in timestamp_list_raw:
+            if line:
+                token ,start,end = line.split()
+                start,end = float(start), float(end)
+                timestamp_list.append([token,start,end])
+        return timestamp_list
+
+    def make_sentence_by_sil(self,timestamp_list):
+        result = []
+        tmp = {'start':-1,'end':-1,'text':''}
+        for line in timestamp_list:
+            if line:
+                token ,start,end = line
+                if token=='<sil>':
+                    if tmp['start']>=0:
+                        result.append(tmp)
+                    tmp = {'start':-1,'end':-1,'text':''}
+                    pass
+                else:
+                    if tmp['start']<0:
+                        tmp['start'] = start 
+                    tmp['end'] = end
+                    tmp['text'] += token 
+        return result
+
 
     def kws(self,waveform_list,WORDS=[],as_hotwords=True):
         """加载词表"""

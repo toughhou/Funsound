@@ -17,6 +17,7 @@ import json
 import random
 import string
 import datetime
+import copy 
 
 class Timer:
     def __enter__(self):

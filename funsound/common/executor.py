@@ -1,5 +1,8 @@
 from funsound.utils import *
-TASK_STRUCT = {'status': "INIT", 'prgs':None, 'result': []}
+TASK_STRUCT = {'status': "INIT", 
+               'prgs_generator':None, 
+               'prgs':None,
+               'result':None}
 
 TASKS = {}
 TASKS_LOCK = threading.Lock()
@@ -32,7 +35,7 @@ class Worker(threading.Thread):
 
     def handle_task(self, task_id, params):
         TASKS[task_id]['status'] = "PROCESS"
-        TASKS[task_id]['prgs'] = self.engine.prgs
+        TASKS[task_id]['prgs_generator'] = self.engine.prgs
         try:
             result = self.processor(params)
             with TASKS_LOCK:
@@ -83,15 +86,14 @@ def get_relax_worker(workers: list):
 def get_task_progress(task_id):
     with TASKS_LOCK:
         if task_id in TASKS:
-            res = {}
-            state = TASKS[task_id]
-            res['status'] = state['status']
-            res['result'] = state['result']
-            res['prgs'] = None
-            if state['prgs'] and  state['prgs'].qsize():
-                while state['prgs'].qsize():
-                    tmp = state['prgs'].get()
-                res['prgs'] = tmp
+
+            if TASKS[task_id]['prgs_generator'] and  TASKS[task_id]['prgs_generator'].qsize():
+                while TASKS[task_id]['prgs_generator'].qsize():
+                    tmp = TASKS[task_id]['prgs_generator'].get()
+                TASKS[task_id]['prgs'] = tmp
+            res = {'status':TASKS[task_id]['status'],
+                   'prgs':TASKS[task_id]['prgs'],
+                   'result':TASKS[task_id]['result']}
             return res
         else:
             return None
@@ -101,7 +103,8 @@ def submit_task(workers, params:list):
     task_id = generate_random_string(20)
     worker = get_relax_worker(workers)
     worker.queue.put([task_id]+params)
-    TASKS[task_id] = TASK_STRUCT.copy()
+    with TASKS_LOCK:
+        TASKS[task_id] = TASK_STRUCT.copy()
     return task_id
     
 
