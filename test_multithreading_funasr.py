@@ -30,7 +30,7 @@ if __name__ == "__main__":
     print(get_worker_status(workers))
 
 
-    audio_file = "funsound/examples/test1.wav"
+    audio_file = "/opt/wangwei/funsound_onnx/cache/2024-08-27+14:48:26-W3nYwaKRiC.mp3"
     task_id = submit_task(workers,params=[audio_file])
 
     while 1:

@@ -92,11 +92,12 @@ class SeacoParaformerPlus(SeacoParaformer):
 
         # 贪心搜索
         for am_scores,valid_token_lens,us_peaks in  zip(AM_SCORES,VALID_TOKEN_LENS,US_PEAKS):
-            token_ids_valid = self.greedy_search(am_scores,valid_token_lens)
-            token_chs = self.converter.ids2tokens(token_ids_valid)
-            text = "".join(token_chs).replace("</s>","")
-            RESULTS.append(text)
-            timestamp_str, timestamp_raw = time_stamp_lfr6_onnx(us_peaks, copy.copy(list(text)))
+            # token_ids_valid = self.greedy_search(am_scores,valid_token_lens)
+            # token_chs = self.converter.ids2tokens(token_ids_valid)
+            # text = "".join(token_chs).replace("</s>","")
+            text = self.decode_one(am_scores,valid_token_lens)
+            RESULTS.append("".join(text))
+            timestamp_str, timestamp_raw = time_stamp_lfr6_onnx(us_peaks, copy.copy(text))
             timestamp_list = self.get_timestamp_list(timestamp_str)
             TIMESTAMPS.append(timestamp_list)
         return RESULTS,TIMESTAMPS, AM_SCORES, VALID_TOKEN_LENS, US_ALPHAS, US_PEAKS

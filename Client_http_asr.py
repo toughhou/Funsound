@@ -70,7 +70,7 @@ class SpeechRecognitionClient:
 
 def main():
     client = SpeechRecognitionClient()
-    audio_file = "funsound/examples/test1.wav"
+    audio_file = r"D:\work\funsound_client\data\语文_小马过河.mp3"
 
     # 获取工作者状态
     worker_status = client.get_worker_status()

@@ -47,6 +47,7 @@ class Worker(threading.Thread):
             with TASKS_LOCK:
                 TASKS[task_id]['status'] = "FAIL"
                 TASKS[task_id]['result'] = str(e)
+            raise e
 
     def run(self):
         while not self._stop_event.is_set():

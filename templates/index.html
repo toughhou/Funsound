@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HHAI 语音识别标注工具</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #000;
+            color: #ff0;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            width: 80%;
+            height: 80%;
+            border: 2px solid #ff0;
+            padding: 10px;
+            box-sizing: border-box;
+            background-color: #111;
+        }
+        .title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #ff0;
+            padding-bottom: 10px;
+        }
+        .content {
+            display: flex;
+            height: calc(100% - 50px); /* Adjust height to fit the title */
+        }
+        .video-container, .asr-container {
+            flex: 1;
+            margin: 10px;
+            border: 2px solid #ff0;
+            padding: 10px;
+            box-sizing: border-box;
+            background-color: #222;
+        }
+        video {
+            width: 100%;
+            height: auto;
+        }
+        .asr-list {
+            max-height: calc(100% - 20px); /* Adjust height to fit padding */
+            overflow-y: auto;
+        }
+        .asr-item {
+            cursor: pointer;
+            padding: 10px;
+            border-bottom: 1px solid #ff0;
+        }
+        .asr-item:hover {
+            background-color: #333;
+        }
+        .play-button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #ff0;
+            color: #000;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .play-button:hover {
+            background-color: #e0e000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">HHAI 语音识别标注工具</div>
+        <div class="content">
+            <div class="video-container">
+                <input type="file" id="videoInput" accept="video/mp4">
+                <input type="file" id="asrInput" accept=".json">
+                <video id="videoPlayer" controls>
+                    您的浏览器不支持 video 标签。
+                </video>
+                <button id="playButton" class="play-button" style="display: none;">播放视频</button>
+            </div>
+            <div class="asr-container">
+                <div id="asrList" class="asr-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const videoInput = document.getElementById('videoInput');
+        const asrInput = document.getElementById('asrInput');
+        const videoPlayer = document.getElementById('videoPlayer');
+        const asrList = document.getElementById('asrList');
+        const playButton = document.getElementById('playButton');
+        let asrData = [];
+        let videoObjectURL = '';
+
+        videoInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                videoObjectURL = URL.createObjectURL(file);
+                videoPlayer.src = videoObjectURL;
+                playButton.style.display = 'inline-block'; // Show the play button
+            }
+        });
+
+        playButton.addEventListener('click', function() {
+            videoPlayer.play();
+            playButton.style.display = 'none'; // Hide the play button after starting playback
+        });
+
+        asrInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        asrData = JSON.parse(e.target.result);
+                        updateAsrList();
+                    } catch (error) {
+                        console.error('无法解析 ASR JSON 文件:', error);
+                    }
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        function updateAsrList() {
+            asrList.innerHTML = '';
+            asrData.forEach(entry => {
+                const div = document.createElement('div');
+                div.className = 'asr-item';
+                div.textContent = `[${entry.start.toFixed(1)} - ${entry.end.toFixed(1)}] ${entry.text}`;
+                div.onclick = () => {
+                    videoPlayer.currentTime = entry.start;
+                    videoPlayer.play();
+                    setTimeout(() => {
+                        videoPlayer.pause();
+                    }, (entry.end - entry.start) * 1000);
+                };
+                asrList.appendChild(div);
+            });
+        }
+    </script>
+</body>
+</html>
