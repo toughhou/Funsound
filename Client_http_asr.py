@@ -52,16 +52,16 @@ class SpeechRecognitionClient:
             progress_response = self.get_task_progress(task_id)
             if progress_response['code'] == 0:
                 status = progress_response['content']['status']
+
                 prgs = progress_response['content']['prgs']
-                print(prgs)
-                if status in ["SUCCESS", "FAIL"]:
-                    if status == "SUCCESS":
-                        print("Transcription Result:")
-                        for line in progress_response['content']['result']:
-                            print(f"%.2f - %.2f %s"%(line['start'], line['end'], line['text']))
-                    else:
-                        print("任务失败")
-                    break
+                if prgs:
+                    print(prgs)
+
+                if status == "SUCCESS":
+                    return progress_response['content']['result']
+                if status == "FAIL":
+                    return []
+
             else:
                 print("无法获取任务进度")
                 exit(1)
@@ -80,9 +80,13 @@ def main():
     task_response = client.submit_task(audio_file)
     print("Task Submission Response:", task_response)
     
+    # 获取转写结果
     if task_response['code'] == 0:
         task_id = task_response['content']
-        client.monitor_task_progress(task_id)
+        result = client.monitor_task_progress(task_id)
+        print("Transcription Result:")
+        for line in result:
+            print(f"%.2f - %.2f %s"%(line['start'], line['end'], line['text']))
     else:
         print("任务提交失败")
         exit(1)
