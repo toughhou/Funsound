@@ -3,15 +3,15 @@ from funsound.common.executor import Worker, launch, get_worker_status, submit_t
 from funsound.utils import *
 
 def init_engine(id):
-    engine = ASR(model_id='funasr_models/iic/speech_seaco_paraformer_large_asr_nat-zh-cn-16k-common-vocab8404-pytorch',
-                cfg_file='conf/funasr_onnx.yaml',
+    engine = ASR(cfg_file='conf/funasr_onnx.yaml',
                 log_file=f'log/funasr-{id}.log')
     engine.init_state()
     return engine
 
 def processor(self,params):
     audio_file = params[0]
-    result = self.engine.inference(audio_file)
+    result = self.engine.inference(audio_file,
+                                   make_sentence_split="punc")
     return result
 
 Worker.processor = processor
@@ -30,7 +30,7 @@ if __name__ == "__main__":
     print(get_worker_status(workers))
 
 
-    audio_file = "/opt/wangwei/funsound_onnx/cache/2024-08-27+14:48:26-W3nYwaKRiC.mp3"
+    audio_file = "/opt/wangwei/funsound_onnx/funsound/examples/test1.wav"
     task_id = submit_task(workers,params=[audio_file])
 
     while 1:

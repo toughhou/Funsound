@@ -1,5 +1,5 @@
 ASR:
-  cache_dir: "funasr_models"
+  model_id: "funasr_models/keepitsimple/faster-whisper-large-v3"
   condition_on_previous_text: False
   language: zh
   device: 'auto'

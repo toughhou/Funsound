@@ -5,8 +5,7 @@ if __name__ == "__main__":
 
     # 加载模型
     cfg = load_config('conf/funasr_onnx.yaml')
-    am_model = init_model(asr_model_name = "iic/speech_seaco_paraformer_large_asr_nat-zh-cn-16k-common-vocab8404-pytorch",
-                          cfg=cfg)
+    am_model = init_model(cfg=cfg)
 
     with open('keywords.txt', 'r', encoding='utf-8') as f:
         WORDS = f.readlines()

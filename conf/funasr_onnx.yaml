@@ -1,13 +1,17 @@
 ASR:
   cache_dir: "funasr_models"
-  asr_model_quantize: True
-  asr_model_ncpu: 4
-  asr_model_batchsize: 40
-  asr_iter_batchsize: 2
+  model_id: "iic/speech_seaco_paraformer_large_asr_nat-zh-cn-16k-common-vocab8404-pytorch"
+  model_quantize: True
+  model_ncpu: 4
+  model_batchsize: 40
+  iter_batchsize: 5
+
+PUNC:
+  cache_dir: "funasr_models"
+  model_id: "csukuangfj/sherpa-onnx-punct-ct-transformer-zh-en-vocab272727-2024-04-12"
+  model_quantize: False
+  model_ncpu: 2
 
 KWS:
   keywords_file: "egs/keywords.txt"
 
-HTTP:
-  host: "0.0.0.0"
-  port: 5002

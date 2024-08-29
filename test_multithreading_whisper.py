@@ -3,8 +3,7 @@ from funsound.common.executor import Worker, launch, get_worker_status, submit_t
 from funsound.utils import *
 
 def init_engine(id):
-    engine = ASR(model_id='funasr_models/keepitsimple/faster-whisper-large-v3',
-                cfg_file='conf/whisper.yaml',
+    engine = ASR(cfg_file='conf/whisper.yaml',
                 log_file=f'log/whisper-{id}.log')
     engine.init_state()
     return engine

@@ -6,22 +6,22 @@ import os
 """
 初始化语音识别引擎，加载模型和配置文件，并初始化状态。
 """
-def init_engine(id):
-    from funsound.whisper.asr import ASR 
-    engine = ASR(model_id='funasr_models/pengzhendong/faster-whisper-large-v2',
-                 cfg_file='conf/whisper.yaml',
-                 log_file=f'log/whisper-{id}.log')
-    engine.init_state()
-    return engine
-
-
 # def init_engine(id):
-#     from funsound.funasr.onnx.offline.asr import ASR
-#     engine = ASR(model_id='funasr_models/iic/speech_seaco_paraformer_large_asr_nat-zh-cn-16k-common-vocab8404-pytorch',
-#                 cfg_file='conf/funasr_onnx.yaml',
-#                 log_file=f'log/funasr-{id}.log')
+#     from funsound.whisper.asr import ASR 
+#     engine = ASR(
+#                  cfg_file='conf/whisper.yaml',
+#                  log_file=f'log/whisper-{id}.log')
 #     engine.init_state()
 #     return engine
+
+
+def init_engine(id):
+    from funsound.funasr.onnx.offline.asr import ASR
+    engine = ASR(
+                cfg_file='conf/funasr_onnx.yaml',
+                log_file=f'log/funasr-{id}.log')
+    engine.init_state()
+    return engine
 
 
 # 定义任务处理器

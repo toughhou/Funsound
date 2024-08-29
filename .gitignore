@@ -20,3 +20,4 @@ log/
 funsound/common/__pycache__
 cache
 funsound/funasr/onnx/offline/__pycache__/asr.cpython-311.pyc
+funsound/funasr/onnx/offline/__pycache__/asr.cpython-312.pyc

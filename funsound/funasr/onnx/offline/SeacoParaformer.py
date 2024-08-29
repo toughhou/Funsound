@@ -1,4 +1,3 @@
-
 from funasr_onnx import SeacoParaformer
 from funsound.utils import *
 from funasr_onnx.utils.timestamp_utils import time_stamp_lfr6_onnx
@@ -23,7 +22,6 @@ def dtw1(P, v_ids):
     # The maximum score for selecting all k phonemes in T frames
     max_score = dp[T][k]
     return max_score / k
-
 
 def dtw2(P, wake_word):
     T, V = P.shape
@@ -112,24 +110,7 @@ class SeacoParaformerPlus(SeacoParaformer):
                 timestamp_list.append([token,start,end])
         return timestamp_list
 
-    def make_sentence_by_sil(self,timestamp_list):
-        result = []
-        tmp = {'start':-1,'end':-1,'text':''}
-        for line in timestamp_list:
-            if line:
-                token ,start,end = line
-                if token=='<sil>':
-                    if tmp['start']>=0:
-                        result.append(tmp)
-                    tmp = {'start':-1,'end':-1,'text':''}
-                    pass
-                else:
-                    if tmp['start']<0:
-                        tmp['start'] = start 
-                    tmp['end'] = end
-                    tmp['text'] += token 
-        return result
-
+    
 
     def kws(self,waveform_list,WORDS=[],as_hotwords=True):
         """加载词表"""
@@ -178,21 +159,22 @@ class SeacoParaformerPlus(SeacoParaformer):
 
 
 
-def init_model(asr_model_name,cfg ={}):
+def init_model(cfg ={}):
     cache_dir = cfg['ASR']['cache_dir']
-    asr_model_quantize = cfg['ASR']['asr_model_quantize']
-    asr_model_ncpu = cfg['ASR']['asr_model_ncpu']
-    asr_model_batchsize = cfg['ASR']['asr_model_batchsize']
+    model_id = cfg['ASR']['model_id']
+    model_quantize = cfg['ASR']['model_quantize']
+    model_ncpu = cfg['ASR']['model_ncpu']
+    model_batchsize = cfg['ASR']['model_batchsize']
 
-    am_model = SeacoParaformerPlus(
-        model_dir=asr_model_name,
+    model = SeacoParaformerPlus(
+        model_dir=model_id,
         cache_dir=cache_dir,
-        quantize=asr_model_quantize,
-        intra_op_num_threads=asr_model_ncpu,
-        batch_size=asr_model_batchsize
+        quantize=model_quantize,
+        intra_op_num_threads=model_ncpu,
+        batch_size=model_batchsize
     )
-    print(f"Success to load the {asr_model_name}")
-    return am_model
+    print(f"Success to load the {model_id}")
+    return model
 
 if __name__ == "__main__":
 

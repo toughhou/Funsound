@@ -5,12 +5,11 @@ from funsound.utils import *
 
 class ASR(ASR_OFFLINE):
     def __init__(self,
-                 model_id="",
                  cfg_file="",
                  log_file="") -> None:
         super().__init__(log_file)
         self.cfg = load_config(cfg_file)
-        self.model_id = model_id
+        self.model_id = self.cfg['ASR']['model_id']
         mkfile(self.log_file)
     
     def init_state(self):
