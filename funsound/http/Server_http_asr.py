@@ -18,7 +18,7 @@ import os
 def init_engine(id):
     from funsound.funasr.onnx.offline.asr import ASR
     engine = ASR(
-                cfg_file='conf/funasr_onnx.yaml',
+                cfg_file='funsound/conf/funasr_onnx.yaml',
                 log_file=f'log/funasr-{id}.log')
     engine.init_state()
     return engine
@@ -149,5 +149,5 @@ if __name__ == "__main__":
     # 启动工作者
     launch(workers)
 
-    # 启动Flask应用，监听5003端口
+    # 启动Flask应用，监听端口
     app.run("0.0.0.0", port=5001)

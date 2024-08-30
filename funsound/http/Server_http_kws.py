@@ -61,7 +61,7 @@ def recognition():
     return create_response(jsonify(response_data))
 
 if __name__ == '__main__':
-    cfg = load_config('conf/funasr_onnx.yaml')
+    cfg = load_config('funsound/conf/funasr_onnx.yaml')
     keywords_file = cfg['KWS']['keywords_file']
     host = cfg['HTTP']['host']
     port = cfg['HTTP']['port']
