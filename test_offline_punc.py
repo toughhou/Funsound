@@ -1,7 +1,7 @@
 from funsound.funasr.onnx.offline import SeacoParaformer,PuncTransformer
 from funsound.utils import *
 
-cfg_file='conf/funasr_onnx.yaml'
+cfg_file='funsound/conf/funasr_onnx.yaml'
 cfg = load_config(cfg_file)
 model = PuncTransformer.init_model(cfg)
 

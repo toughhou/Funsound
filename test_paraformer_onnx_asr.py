@@ -5,7 +5,7 @@ from funsound.compute_mer import compute_mer_text
 if __name__ == "__main__":
 
     # 加载模型
-    cfg = load_config('conf/funasr_onnx.yaml')
+    cfg = load_config('funsound/conf/funasr_onnx.yaml')
     am_model = init_model(cfg=cfg)
 
     # 加载音频

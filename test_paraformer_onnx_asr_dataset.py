@@ -16,7 +16,7 @@ def test_datadir(am_model, data_dir,audio_format = 'wav'):
 if __name__ == "__main__":
 
     # 加载模型
-    cfg = load_config('conf/funasr_onnx.yaml')
+    cfg = load_config('funsound/conf/funasr_onnx.yaml')
     am_model = init_model(cfg=cfg)
 
     dir = "/opt/wangwei/funsound_onnx/dataset/道德_自然灾害"

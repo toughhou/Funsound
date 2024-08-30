@@ -3,7 +3,7 @@ from funsound.common.executor import Worker, launch, get_worker_status, submit_t
 from funsound.utils import *
 
 def init_engine(id):
-    engine = ASR(cfg_file='conf/funasr_onnx.yaml',
+    engine = ASR(cfg_file='funsound/conf/funasr_onnx.yaml',
                 log_file=f'log/funasr-{id}.log')
     engine.init_state()
     return engine

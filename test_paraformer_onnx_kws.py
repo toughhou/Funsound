@@ -4,7 +4,7 @@ from funsound.funasr.onnx.offline.SeacoParaformer import init_model
 if __name__ == "__main__":
 
     # 加载模型
-    cfg = load_config('conf/funasr_onnx.yaml')
+    cfg = load_config('funsound/conf/funasr_onnx.yaml')
     am_model = init_model(cfg=cfg)
 
     with open('keywords.txt', 'r', encoding='utf-8') as f:
