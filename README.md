@@ -6,6 +6,7 @@
     pip install -U funasr
     pip install -U funasr-onnx
     pip install -U modelscope
+    # 其他依赖请参考 funsound.utils 的导入项
 ```
 
 ## 网站展示
