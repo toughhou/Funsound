@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HHAI 语音识别标注工具</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #000;
+            color: #ff0;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 80%;
+            border: 2px solid #ff0;
+            padding: 10px;
+            box-sizing: border-box;
+            background-color: #111;
+        }
+        .title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #ff0;
+            padding-bottom: 10px;
+        }
+        .content {
+            display: flex;
+            height: calc(100% - 50px); /* Adjust height to fit the title */
+        }
+        .video-container {
+            flex: 0 0 40%;
+            margin: 10px;
+            border: 2px solid #ff0;
+            padding: 10px;
+            box-sizing: border-box;
+            background-color: #222;
+        }
+        .asr-container {
+            flex: 1;
+            margin: 10px;
+            border: 2px solid #ff0;
+            padding: 10px;
+            box-sizing: border-box;
+            background-color: #222;
+            position: relative; /* Added for absolute positioning */
+        }
+        video {
+            width: 100%;
+            height: auto;
+        }
+        .asr-list {
+            max-height: calc(100% - 60px); /* Adjust height to fit padding and button */
+            overflow-y: auto;
+        }
+        .asr-item {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #ff0;
+            box-sizing: border-box;
+        }
+        .asr-item label, .asr-item input, .asr-item select, .asr-item button {
+            margin: 0 5px;
+        }
+        .asr-item .timestamp {
+            display: flex;
+            align-items: center;
+            flex: 0 0 150px;
+            text-align: center;
+        }
+        .asr-item .timestamp input {
+            width: 60px;
+            text-align: center;
+        }
+        .asr-item .role-select, .asr-item .query-field, .asr-item .answer-field {
+            flex: 1;
+            width: 10%;
+        }
+        .asr-item input[type="text"], .asr-item select {
+            padding: 5px;
+            border: 1px solid #ff0;
+            background-color: #333;
+            color: #ff0;
+            width: 70%;
+        }
+        .asr-item input[type="checkbox"] {
+            margin-right: 5px;
+        }
+        .play-button {
+            margin: 0 5px;
+            padding: 5px 10px;
+            background-color: #ff0;
+            color: #000;
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+            height: 20px;
+        }
+        .play-button:hover {
+            background-color: #e0e000;
+        }
+        .export-button {
+            position: absolute;
+            bottom: 10px; /* Position at the bottom */
+            left: 50%; /* Center horizontally */
+            transform: translateX(-50%); /* Adjust centering */
+            padding: 10px;
+            background-color: #ff0;
+            color: #000;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .export-button:hover {
+            background-color: #e0e000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">Funsound 语音识别标注工具</div>
+        <div class="content">
+            <div class="video-container">
+                <input type="file" id="videoInput" accept="video/mp4">
+                <input type="file" id="asrInput" accept=".json">
+                <video id="videoPlayer" controls>
+                    您的浏览器不支持 video 标签。
+                </video>
+            </div>
+            <div class="asr-container">
+                <div id="asrList" class="asr-list"></div>
+                <button id="exportButton" class="export-button">导出</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const videoInput = document.getElementById('videoInput');
+        const asrInput = document.getElementById('asrInput');
+        const videoPlayer = document.getElementById('videoPlayer');
+        const asrList = document.getElementById('asrList');
+        const exportButton = document.getElementById('exportButton');
+        let asrData = [];
+        let videoObjectURL = '';
+
+        videoInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                videoObjectURL = URL.createObjectURL(file);
+                videoPlayer.src = videoObjectURL;
+            }
+        });
+
+        asrInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        asrData = JSON.parse(e.target.result);
+                        updateAsrList();
+                    } catch (error) {
+                        console.error('无法解析 ASR JSON 文件:', error);
+                    }
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        function updateAsrList() {
+            asrList.innerHTML = '';
+            asrData.forEach((entry) => {
+                const div = document.createElement('div');
+                div.className = 'asr-item';
+                
+                div.innerHTML = `
+                    <div class="timestamp">
+                        <button class="play-button"></button>
+                        <input type="number" value="${entry.start.toFixed(1)}" step="0.1" min="0" class="start-time">
+                        -
+                        <input type="number" value="${entry.end.toFixed(1)}" step="0.1" min="0" class="end-time">
+                    </div>
+
+                    <input type="text" value="${entry.text}" placeholder="文本" class="text-field">
+
+                    <label>
+                        <input type="checkbox" ${entry.drop ? 'checked' : ''}> 丢弃
+                    </label>
+                `;
+                
+                const startInput = div.querySelector('.start-time');
+                const endInput = div.querySelector('.end-time');
+                const textInput = div.querySelector('input.text-field');
+                const dropCheckbox = div.querySelector('input[type="checkbox"]');
+                const playButton = div.querySelector('.play-button');
+                
+                startInput.addEventListener('input', () => {
+                    entry.start = parseFloat(startInput.value);
+                });
+                
+                endInput.addEventListener('input', () => {
+                    entry.end = parseFloat(endInput.value);
+                });
+
+                textInput.addEventListener('input', () => {
+                    entry.text = textInput.value;
+                });
+
+                dropCheckbox.addEventListener('change', () => {
+                    entry.drop = dropCheckbox.checked;
+                });
+
+                startInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowUp') {
+                        startInput.value = (parseFloat(startInput.value) + 0.1).toFixed(1);
+                        startInput.dispatchEvent(new Event('input'));
+                    } else if (e.key === 'ArrowDown') {
+                        startInput.value = (parseFloat(startInput.value) - 0.1).toFixed(1);
+                        startInput.dispatchEvent(new Event('input'));
+                    }
+                });
+
+                endInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowUp') {
+                        endInput.value = (parseFloat(endInput.value) + 0.1).toFixed(1);
+                        endInput.dispatchEvent(new Event('input'));
+                    } else if (e.key === 'ArrowDown') {
+                        endInput.value = (parseFloat(endInput.value) - 0.1).toFixed(1);
+                        endInput.dispatchEvent(new Event('input'));
+                    }
+                });
+
+                playButton.addEventListener('click', () => {
+                    videoPlayer.currentTime = entry.start;
+                    videoPlayer.play();
+                    setTimeout(() => {
+                        videoPlayer.pause();
+                    }, (entry.end - entry.start) * 1000);
+                });
+
+                asrList.appendChild(div);
+            });
+        }
+
+        exportButton.addEventListener('click', () => {
+            const correctedData = asrData.map(entry => ({
+                start: entry.start,
+                end: entry.end,
+                text: entry.text,
+                drop: entry.drop
+            }));
+
+            const blob = new Blob([JSON.stringify(correctedData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'corrected_asr_data.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+    </script>
+</body>
+</html>

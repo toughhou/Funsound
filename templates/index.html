@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,146 +8,549 @@
     <style>
         body {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #000;
-            color: #ff0;
-            font-family: Arial, sans-serif;
+            background-color: #1c1c1c;
+            color: #eaeaea;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+
         .container {
             display: flex;
             flex-direction: column;
             width: 80%;
             height: 80%;
-            border: 2px solid #ff0;
-            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 20px;
             box-sizing: border-box;
-            background-color: #111;
+            background-color: #282828;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
         }
+
         .title {
             text-align: center;
-            font-size: 2rem;
-            margin-bottom: 10px;
-            border-bottom: 2px solid #ff0;
-            padding-bottom: 10px;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #ffffff; /* 标题白色 */
+            border-bottom: 2px solid #444;
+            padding-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+
+        .title img {
+            width: 40px;
+            height: 40px;
+            margin-right: 15px;
+        }
+
         .content {
             display: flex;
-            height: calc(100% - 50px); /* Adjust height to fit the title */
+            height: calc(100% - 50px);
+            flex-grow: 1;
+            overflow: hidden;
         }
-        .video-container, .asr-container {
-            flex: 1;
+
+        .video-container {
+            flex: 0 0 40%;
             margin: 10px;
-            border: 2px solid #ff0;
-            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 15px;
             box-sizing: border-box;
-            background-color: #222;
+            background-color: #333;
+            overflow: hidden;
         }
+
+        .asr-container {
+            flex: 0 0 60%;
+            margin: 10px;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 15px;
+            box-sizing: border-box;
+            background-color: #333;
+            overflow-y: auto;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
         video {
             width: 100%;
-            height: auto;
+            height: 300px;
+            background-color: #000;
+            border-radius: 8px;
+            margin-bottom: 15px;
         }
+
+        label {
+            margin-bottom: 5px;
+            font-size: 1rem;
+            color: #aaa;
+            display: block;
+        }
+
         .asr-list {
-            max-height: calc(100% - 20px); /* Adjust height to fit padding */
+            flex-grow: 1;
             overflow-y: auto;
+            background-color: #1c1c1c;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            color: #eaeaea;
+            margin-bottom: 10px;
         }
+
         .asr-item {
-            cursor: pointer;
+            display: flex;
+            align-items: center;
             padding: 10px;
-            border-bottom: 1px solid #ff0;
+            border-bottom: 1px solid #444;
+            box-sizing: border-box;
+            color: #eaeaea;
+            justify-content: space-between;
         }
-        .asr-item:hover {
-            background-color: #333;
+
+        .asr-item label,
+        .asr-item input,
+        .asr-item select,
+        .asr-item button {
+            margin: 0 5px;
         }
+
+        .asr-item .timestamp {
+            display: flex;
+            align-items: center;
+            flex: 0 0 200px;
+            text-align: center;
+        }
+
+        .asr-item .timestamp input {
+            width: 60px;
+            text-align: center;
+            background-color: #444;
+            color: #eaeaea;
+            border: 1px solid #555;
+            border-radius: 4px;
+        }
+
+        .asr-item input[type="text"],
+        .asr-item select {
+            padding: 5px;
+            border: 1px solid #555;
+            background-color: #444;
+            color: #eaeaea;
+            width: 100%;
+            border-radius: 4px;
+            flex: 1;
+        }
+
+        .asr-item input[type="checkbox"] {
+            margin-right: 5px;
+            transform: scale(0.8);
+        }
+
         .play-button {
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #ff0;
+            margin: 0 5px;
+            padding: 3px 8px;
+            background-color: #ff8c00; /* 使用橙色 */
             color: #000;
             border: none;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 0.8rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            white-space: nowrap;
         }
+
         .play-button:hover {
-            background-color: #e0e000;
+            background-color: #e67e00;
+        }
+
+        .upload-button {
+            padding: 10px;
+            background-color: #007bff; /* 使用蓝色 */
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-right: 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .upload-button:hover {
+            background-color: #0056b3;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .file-input {
+            font-size: 1rem;
+            font-weight: bold;
+            color: white;
+            background-color: #17a2b8; /* 使用青色 */
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .file-input:hover {
+            background-color: #138496;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .export-button {
+            padding: 10px;
+            background-color: #28a745; /* 使用绿色 */
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .export-button:hover {
+            background-color: #218838;
+        }
+
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            background-color: #444;
+            margin-top: 10px;
+            border-radius: 4px;
+        }
+
+        .progress-bar div {
+            width: 0%;
+            background-color: #00ff84; /* 使用绿色 */
+            color: #000;
+            text-align: center;
+            padding: 2px 0;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .center-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            position: sticky;
+            bottom: 0;
+            background-color: #333;
+            padding: 10px 0;
+            border-top: 1px solid #444;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #1c1c1c;
+            color: #888;
+            font-size: 0.9rem;
+            margin-top: 20px;
+            border-top: 1px solid #444;
+            width: 100%;
+        }
+
+        footer a {
+            color: #00ff84;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        footer a:hover {
+            color: #00d473;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
-        <div class="title">HHAI 语音识别标注工具</div>
+        <div class="title">
+            <!-- <img src="https://via.placeholder.com/40" alt="Logo"> -->
+            <img src="{{ url_for('static', filename='icon.jpg') }}" alt="Funsound Logo">
+            Funsound 音视频语音识别
+        </div>
         <div class="content">
             <div class="video-container">
-                <input type="file" id="videoInput" accept="video/mp4">
-                <input type="file" id="asrInput" accept=".json">
+                <label for="videoInput">选择视频文件：</label>
+                <div class="file-input-wrapper">
+                    <button class="file-input">选择文件</button>
+                    <input type="file" id="videoInput" accept="video/mp4">
+                </div>
                 <video id="videoPlayer" controls>
                     您的浏览器不支持 video 标签。
                 </video>
-                <button id="playButton" class="play-button" style="display: none;">播放视频</button>
+                <div class="buttons-container">
+                    <button id="uploadBtn" class="upload-button" onclick="uploadFile()">上传并识别</button>
+                </div>
+                <label>上传进度：</label>
+                <div id="uploadProgress" class="progress-bar">
+                    <div>0%</div>
+                </div>
+                <label>识别进度：</label>
+                <div id="recognitionProgress" class="progress-bar">
+                    <div>0%</div>
+                </div>
+                <div id="logContent" style="margin-top: 10px; color: #fff;"></div>
             </div>
             <div class="asr-container">
+                <label>识别结果：</label>
                 <div id="asrList" class="asr-list"></div>
+                <div class="center-buttons">
+                    <button id="exportJsonBtn" class="export-button" onclick="exportAsrData('json')">导出 JSON</button>
+                    <button id="exportTxtBtn" class="export-button" onclick="exportAsrData('txt')">导出 TXT</button>
+                </div>
             </div>
         </div>
     </div>
 
+    <footer>
+        联系邮箱: <a href="mailto:605686962@qq.com">605686962@qq.com</a> |
+        CSDN: <a href="https://blog.csdn.net/Ephemeroptera" target="_blank">https://blog.csdn.net/Ephemeroptera</a> |
+        广告招租
+    </footer>
+
     <script>
-        const videoInput = document.getElementById('videoInput');
-        const asrInput = document.getElementById('asrInput');
-        const videoPlayer = document.getElementById('videoPlayer');
-        const asrList = document.getElementById('asrList');
-        const playButton = document.getElementById('playButton');
+        const serverUrl = "/";
+        let currentTaskId = null;
         let asrData = [];
-        let videoObjectURL = '';
 
-        videoInput.addEventListener('change', function(event) {
+        document.getElementById('videoInput').addEventListener('change', function (event) {
             const file = event.target.files[0];
-            if (file) {
-                videoObjectURL = URL.createObjectURL(file);
-                videoPlayer.src = videoObjectURL;
-                playButton.style.display = 'inline-block'; // Show the play button
+            document.getElementById('uploadBtn').disabled = file.size > 300 * 1024 * 1024;
+
+            const videoPlayer = document.getElementById('videoPlayer');
+            const videoURL = URL.createObjectURL(file);
+            videoPlayer.src = videoURL;
+        });
+
+        function uploadFile() {
+            const fileInput = document.getElementById('videoInput');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert('请先选择一个文件');
+                return;
             }
-        });
 
-        playButton.addEventListener('click', function() {
-            videoPlayer.play();
-            playButton.style.display = 'none'; // Hide the play button after starting playback
-        });
+            document.getElementById('uploadBtn').disabled = true;
+            document.getElementById('uploadBtn').innerText = '转写中...';
 
-        asrInput.addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    try {
-                        asrData = JSON.parse(e.target.result);
-                        updateAsrList();
-                    } catch (error) {
-                        console.error('无法解析 ASR JSON 文件:', error);
+            resetProgress();
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/submit', true);
+            xhr.upload.onprogress = updateUploadProgress;
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+                    currentTaskId = response.content;
+                    monitorTaskProgress(currentTaskId);
+                } else {
+                    alert('上传失败，请重试');
+                    resetUploadButton();
+                }
+            };
+            xhr.onerror = handleUploadError;
+
+            const formData = new FormData();
+            formData.append('file', file);
+            xhr.send(formData);
+        }
+
+        function resetProgress() {
+            document.getElementById('uploadProgress').firstElementChild.style.width = '0%';
+            document.getElementById('uploadProgress').firstElementChild.innerText = '';
+            document.getElementById('recognitionProgress').firstElementChild.style.width = '0%';
+            document.getElementById('recognitionProgress').firstElementChild.innerText = '';
+            document.getElementById('asrList').innerHTML = "";
+            document.getElementById('logContent').innerText = "";
+        }
+
+        function updateUploadProgress(event) {
+            if (event.lengthComputable) {
+                const percentComplete = (event.loaded / event.total) * 100;
+                document.getElementById('uploadProgress').firstElementChild.style.width = `${percentComplete}%`;
+                document.getElementById('uploadProgress').firstElementChild.innerText = `${percentComplete.toFixed(2)}%`;
+            }
+        }
+
+        function handleUploadError() {
+            alert('上传失败，请重试');
+            resetUploadButton();
+        }
+
+        function resetUploadButton() {
+            document.getElementById('uploadBtn').disabled = false;
+            document.getElementById('uploadBtn').innerText = '上传并识别';
+        }
+
+        function monitorTaskProgress(taskId) {
+            let retries = 0;
+            const maxRetries = 3600;
+
+            const intervalId = setInterval(function () {
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', `/task_prgs/${taskId}`, true);
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        const response = JSON.parse(xhr.responseText);
+                        const status = response.content.status;
+                        const progress = response.content.prgs;
+
+                        if (progress) {
+                            updateRecognitionProgress(progress.cur / progress.total * 100, progress.msg);
+                        }
+
+                        if (status === "SUCCESS") {
+                            clearInterval(intervalId);
+                            asrData = response.content.result;
+                            displayResults(asrData);
+                            resetUploadButton();
+                        } else if (status === "FAIL") {
+                            clearInterval(intervalId);
+                            alert('识别任务失败');
+                            resetUploadButton();
+                        }
+                    } else {
+                        alert('获取进度失败，请重试');
+                        clearInterval(intervalId);
+                        resetUploadButton();
                     }
                 };
-                reader.readAsText(file);
-            }
-        });
+                xhr.onerror = function () {
+                    alert('获取进度失败，请重试');
+                    clearInterval(intervalId);
+                    resetUploadButton();
+                };
+                xhr.send();
 
-        function updateAsrList() {
-            asrList.innerHTML = '';
-            asrData.forEach(entry => {
+                retries += 1;
+                if (retries >= maxRetries) {
+                    clearInterval(intervalId);
+                    alert('超出最大重试次数，任务未完成');
+                    resetUploadButton();
+                }
+            }, 1000);
+        }
+
+        function updateRecognitionProgress(progress, msg) {
+            document.getElementById('recognitionProgress').firstElementChild.style.width = `${progress}%`;
+            document.getElementById('recognitionProgress').firstElementChild.innerText = `${progress.toFixed(2)}%`;
+            document.getElementById('logContent').innerText = `进度: ${progress.toFixed(2)}%, 状态: ${msg}`;
+        }
+
+        function displayResults(results) {
+            const asrList = document.getElementById('asrList');
+            asrList.innerHTML = "";
+            results.forEach((entry) => {
                 const div = document.createElement('div');
                 div.className = 'asr-item';
-                div.textContent = `[${entry.start.toFixed(1)} - ${entry.end.toFixed(1)}] ${entry.text}`;
-                div.onclick = () => {
+
+                div.innerHTML = `
+                    <div class="timestamp">
+                        <button class="play-button">播放</button>
+                        <input type="number" value="${entry.start.toFixed(1)}" step="0.1" min="0" class="start-time">
+                        -
+                        <input type="number" value="${entry.end.toFixed(1)}" step="0.1" min="0" class="end-time">
+                    </div>
+
+                    <input type="text" value="${entry.text}" placeholder="文本" class="text-field">
+
+                    <label>
+                        <input type="checkbox" ${entry.drop ? 'checked' : ''}> 丢弃
+                    </label>
+                `;
+
+                const startInput = div.querySelector('.start-time');
+                const endInput = div.querySelector('.end-time');
+                const textInput = div.querySelector('input.text-field');
+                const dropCheckbox = div.querySelector('input[type="checkbox"]');
+                const playButton = div.querySelector('.play-button');
+
+                startInput.addEventListener('input', () => {
+                    entry.start = parseFloat(startInput.value);
+                });
+
+                endInput.addEventListener('input', () => {
+                    entry.end = parseFloat(endInput.value);
+                });
+
+                textInput.addEventListener('input', () => {
+                    entry.text = textInput.value;
+                });
+
+                dropCheckbox.addEventListener('change', () => {
+                    entry.drop = dropCheckbox.checked;
+                });
+
+                playButton.addEventListener('click', () => {
+                    const videoPlayer = document.getElementById('videoPlayer');
                     videoPlayer.currentTime = entry.start;
                     videoPlayer.play();
                     setTimeout(() => {
                         videoPlayer.pause();
                     }, (entry.end - entry.start) * 1000);
-                };
+                });
+
                 asrList.appendChild(div);
             });
         }
+
+        function exportAsrData(format) {
+            const filteredData = asrData.filter(entry => !entry.drop);
+
+            if (format === 'json') {
+                const blob = new Blob([JSON.stringify(filteredData, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'corrected_asr_data.json';
+                a.click();
+                URL.revokeObjectURL(url);
+            } else if (format === 'txt') {
+                const txtContent = filteredData.map(entry => `${entry.start.toFixed(2)} ${entry.end.toFixed(2)} ${entry.text}`).join('\n');
+                const blob = new Blob([txtContent], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'corrected_asr_data.txt';
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+        }
     </script>
 </body>
+
 </html>

@@ -7,7 +7,7 @@ class CT_TransformerPlus(CT_Transformer):
         super().__init__(*args, **kwargs)
         self.pause_threshold = float('inf')
         self.punctuation_list = ["_", "，", "。", "？", "、"]
-        self.punctuation_eos_list = ["。", "？"]
+        self.punctuation_eos_list = ["。", "？","，"]
 
     def segment_string_to_list( self,input_str):
         """将字符串分割成单词列表，标点符号与前一个单词连接"""

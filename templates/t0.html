@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ url_for('static', filename='icon.jpg') }}" type="image/x-icon">
+    <title>Funsound 快速语音识别转写</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .wrapper {
+            width: 80%;
+            max-width: 1200px;
+            background-color: #1f1f1f;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        .header {
+            text-align: center;
+            padding: 20px;
+            border-bottom: 2px solid #333;
+        }
+        .header img {
+            height: 60px;
+            vertical-align: middle;
+        }
+        .header h1 {
+            display: inline;
+            font-size: 36px;
+            margin-left: 20px;
+        }
+        .container {
+            display: flex;
+            flex-direction: row;
+            height: calc(100vh - 260px);
+        }
+        .left-column, .right-column {
+            flex: 1;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .right-column {
+            border-left: 2px solid #333;
+            display: flex;
+            flex-direction: column;
+        }
+        .status, .file-input, .progress, .log, .footer {
+            margin-bottom: 20px;
+        }
+        .status, .file-input, .progress, .log, .result {
+            padding: 10px;
+            background-color: #1f1f1f;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 18px;
+        }
+        .file-input {
+            text-align: center;
+        }
+        .file-input input[type="file"] {
+            display: none;
+        }
+        .file-input label {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #3498db;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+            font-size: 18px;
+            margin-right: 20px;
+        }
+        .file-input label:hover {
+            background-color: #2980b9;
+        }
+        .file-input button {
+            padding: 10px 20px;
+            background-color: #e74c3c;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+            font-size: 18px;
+        }
+        .file-input button:hover {
+            background-color: #c0392b;
+        }
+        .file-input button:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+        }
+        .progress-bar {
+            background-color: #333;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+            height: 30px;
+            margin-top: 10px;
+        }
+        .progress-bar div {
+            height: 100%;
+            background-color: #4caf50;
+            text-align: center;
+            line-height: 30px;
+            color: white;
+            width: 0%;
+        }
+        .log {
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid #555;
+        }
+        .result {
+            flex: 1;
+            overflow-y: auto;
+            border: 1px solid #555;
+            padding: 10px;
+        }
+        .footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #1f1f1f;
+            border-top: 2px solid #333;
+            font-size: 16px;
+        }
+        .footer a {
+            color: #3498db;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* 针对平板设备 */
+        @media (max-width: 768px) {
+            .wrapper {
+                width: 90%;
+                padding: 15px;
+            }
+            .header h1 {
+                font-size: 28px;
+            }
+            .container {
+                flex-direction: column;
+                height: auto;
+            }
+            .left-column, .right-column {
+                padding: 10px;
+            }
+            .right-column {
+                border-left: none;
+                border-top: 2px solid #333;
+                margin-top: 20px;
+            }
+        }
+
+        /* 针对手机设备 */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            .wrapper {
+                width: 100%;
+                padding: 10px;
+            }
+            .header {
+                padding: 10px;
+            }
+            .header h1 {
+                font-size: 20px;
+                margin-left: 10px;
+            }
+            .header img {
+                height: 40px;
+            }
+            .status, .file-input, .progress, .log, .result {
+                font-size: 16px;
+                padding: 5px;
+            }
+            .file-input label, .file-input button {
+                padding: 5px 10px;
+                font-size: 14px;
+            }
+            .container {
+                flex-direction: column;
+                height: auto;
+            }
+            .left-column, .right-column {
+                padding: 10px;
+            }
+            .right-column {
+                border-left: none;
+                border-top: 2px solid #333;
+                margin-top: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <div class="header">
+        <img src="{{ url_for('static', filename='icon.jpg') }}" alt="Funsound Logo">
+        <h1>Funsound 快速语音识别转写</h1>
+    </div>
+
+    <div class="container">
+        <div class="left-column">
+            <div class="status">
+                <label>后台引擎状态：</label>
+                <ul id="workerStatus"></ul>
+            </div>
+            <div class="file-input">
+                <label for="fileInput">选择文件</label>
+                <input type="file" id="fileInput" accept=".wav, .mp3, .m4a, .mp4, .aac">
+                <button id="uploadBtn" onclick="uploadFile()">上传和识别</button>
+                <p id="fileSize">文件大小: --</p>
+            </div>
+            <div class="progress">
+                <label>上传进度：</label>
+                <div class="progress-bar" id="uploadProgress"><div></div></div>
+                <label>识别进度：</label>
+                <div class="progress-bar" id="recognitionProgress"><div></div></div>
+            </div>
+            <div class="log">
+                <label>转写日志：</label>
+                <div id="logContent">日志内容将显示在此处...</div>
+            </div>
+        </div>
+        <div class="right-column">
+            <div class="result">
+                <label>识别结果：</label>
+                <div id="resultContent">识别结果将显示在此处...</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>
+            <a href="https://github.com/coolEphemeroptera" target="_blank">GitHub主页</a> | 
+            <a href="https://blog.csdn.net/Ephemeroptera" target="_blank">CSDN主页</a> |  
+            【语音算法|自媒体】业务承接联系邮箱: 605686962@qq.com
+        </p>
+    </div>
+</div>
+
+<script>
+    const serverUrl = "/"; 
+    let currentTaskId = null;
+
+    document.getElementById('fileInput').addEventListener('change', function (event) {
+        const file = event.target.files[0];
+        const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+        document.getElementById('fileSize').innerText = `文件大小: ${fileSizeMB} MB`;
+        document.getElementById('uploadBtn').disabled = file.size > 300 * 1024 * 1024;
+    });
+
+    function uploadFile() {
+        const fileInput = document.getElementById('fileInput');
+        const file = fileInput.files[0];
+
+        if (!file) {
+            alert('请先选择一个文件');
+            return;
+        }
+
+        document.getElementById('uploadBtn').disabled = true;
+        document.getElementById('uploadBtn').innerText = '转写中...';
+
+        resetProgress();
+        
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/submit', true);
+        xhr.upload.onprogress = updateUploadProgress;
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                const response = JSON.parse(xhr.responseText);
+                currentTaskId = response.content;
+                monitorTaskProgress(currentTaskId);
+            } else {
+                alert('上传失败，请重试');
+                resetUploadButton();
+            }
+        };
+        xhr.onerror = handleUploadError;
+        
+        const formData = new FormData();
+        formData.append('file', file);
+        xhr.send(formData);
+    }
+
+    function resetProgress() {
+        document.getElementById('uploadProgress').firstElementChild.style.width = '0%';
+        document.getElementById('uploadProgress').firstElementChild.innerText = '';
+        document.getElementById('recognitionProgress').firstElementChild.style.width = '0%';
+        document.getElementById('recognitionProgress').firstElementChild.innerText = '';
+        document.getElementById('resultContent').innerHTML = "";
+        document.getElementById('logContent').innerText = "";
+    }
+
+    function updateUploadProgress(event) {
+        if (event.lengthComputable) {
+            const percentComplete = (event.loaded / event.total) * 100;
+            document.getElementById('uploadProgress').firstElementChild.style.width = `${percentComplete}%`;
+            document.getElementById('uploadProgress').firstElementChild.innerText = `${percentComplete.toFixed(2)}%`;
+        }
+    }
+
+    function handleUploadError() {
+        alert('上传失败，请重试');
+        resetUploadButton();
+    }
+
+    function resetUploadButton() {
+        document.getElementById('uploadBtn').disabled = false;
+        document.getElementById('uploadBtn').innerText = '上传和识别';
+    }
+
+    function monitorTaskProgress(taskId) {
+        let retries = 0;
+        const maxRetries = 3600;
+
+        const intervalId = setInterval(function () {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', `/task_prgs/${taskId}`, true);
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+                    const status = response.content.status;
+                    const progress = response.content.prgs;
+
+                    if (progress) {
+                        updateRecognitionProgress(progress.cur / progress.total * 100, progress.msg);
+                    }
+
+                    if (status === "SUCCESS") {
+                        clearInterval(intervalId);
+                        displayResults(response.content.result);
+                        resetUploadButton();
+                    } else if (status === "FAIL") {
+                        clearInterval(intervalId);
+                        alert('识别任务失败');
+                        resetUploadButton();
+                    }
+                } else {
+                    alert('获取进度失败，请重试');
+                    clearInterval(intervalId);
+                    resetUploadButton();
+                }
+            };
+            xhr.onerror = function () {
+                alert('获取进度失败，请重试');
+                clearInterval(intervalId);
+                resetUploadButton();
+            };
+            xhr.send();
+
+            retries += 1;
+            if (retries >= maxRetries) {
+                clearInterval(intervalId);
+                alert('超出最大重试次数，任务未完成');
+                resetUploadButton();
+            }
+        }, 1000);
+    }
+
+    function updateRecognitionProgress(progress, msg) {
+        document.getElementById('recognitionProgress').firstElementChild.style.width = `${progress}%`;
+        document.getElementById('recognitionProgress').firstElementChild.innerText = `${progress.toFixed(2)}%`;
+        document.getElementById('logContent').innerText = `进度: ${progress.toFixed(2)}%, 状态: ${msg}`;
+    }
+
+    function displayResults(results) {
+        const resultContent = results.map(item => `[${item.start.toFixed(2)} - ${item.end.toFixed(2)}] ${item.text}`).join('<br>');
+        document.getElementById('resultContent').innerHTML = resultContent;
+    }
+
+    function fetchWorkerStatus() {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', '/worker_status', true);
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                const response = JSON.parse(xhr.responseText);
+                const workerStatuses = response.content.map((worker, index) => `
+                    <li>Worker ${index + 1} - ${worker === 0 ? '空闲' : '忙碌中'}</li>
+                `).join('');
+                document.getElementById('workerStatus').innerHTML = workerStatuses;
+            } else {
+                document.getElementById('workerStatus').innerText = '获取后台状态失败';
+            }
+        };
+        xhr.onerror = function () {
+            document.getElementById('workerStatus').innerText = '获取后台状态失败';
+        };
+        xhr.send();
+    }
+
+    // 初始获取后台状态
+    fetchWorkerStatus();
+</script>
+
+</body>
+</html>

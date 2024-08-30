@@ -1,0 +1,1 @@
+nohup python $1 > run.log 2>&1 &

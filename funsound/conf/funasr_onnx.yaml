@@ -1,5 +1,5 @@
 ASR:
-  cache_dir: "funasr_models"
+  cache_dir: "/home/ubuntu/funsound/funasr_models"
   model_id: "iic/speech_seaco_paraformer_large_asr_nat-zh-cn-16k-common-vocab8404-pytorch"
   model_quantize: True
   model_ncpu: 4
@@ -7,7 +7,7 @@ ASR:
   iter_batchsize: 5
 
 PUNC:
-  cache_dir: "funasr_models"
+  cache_dir: "/home/ubuntu/funsound/funasr_models"
   model_id: "csukuangfj/sherpa-onnx-punct-ct-transformer-zh-en-vocab272727-2024-04-12"
   model_quantize: False
   model_ncpu: 2
